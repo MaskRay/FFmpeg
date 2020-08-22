@@ -100,6 +100,12 @@
  * @param v Name of the variable
  */
 
+#if defined(__GNUC__) && !(defined(_WIN32) || defined(__CYGWIN__))
+    #define av_visibility_hidden __attribute__ ((visibility ("hidden")))
+#else
+    #define av_visibility_hidden
+#endif
+
 #if defined(__INTEL_COMPILER) && __INTEL_COMPILER < 1110 || defined(__SUNPRO_C)
     #define DECLARE_ALIGNED(n,t,v)      t __attribute__ ((aligned (n))) v
     #define DECLARE_ASM_ALIGNED(n,t,v)  t __attribute__ ((aligned (n))) v
@@ -110,7 +116,7 @@
     #define DECLARE_ASM_CONST(n,t,v)    static const t av_used __attribute__ ((aligned (FFMIN(n, 16)))) v
 #elif defined(__GNUC__) || defined(__clang__)
     #define DECLARE_ALIGNED(n,t,v)      t __attribute__ ((aligned (n))) v
-    #define DECLARE_ASM_ALIGNED(n,t,v)  t av_used __attribute__ ((aligned (n))) v
+    #define DECLARE_ASM_ALIGNED(n,t,v)  t av_used __attribute__ ((aligned (n))) av_visibility_hidden v
     #define DECLARE_ASM_CONST(n,t,v)    static const t av_used __attribute__ ((aligned (n))) v
 #elif defined(_MSC_VER)
     #define DECLARE_ALIGNED(n,t,v)      __declspec(align(n)) t v
